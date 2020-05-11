@@ -19,6 +19,7 @@ class CommentPhotoSerializer(serializers.ModelSerializer):
         fields = "__all__"
 
 class CommentProfileSerializer(serializers.ModelSerializer):
+    user = UserSerializer()
     class Meta:
         model = CommentProfile
         fields = "__all__"
@@ -39,6 +40,7 @@ class PersonalSpaceSerializer(serializers.ModelSerializer):
         fields = "__all__"
 
 class StatusSerializer(serializers.ModelSerializer):
+    user = UserSerializer()
     class Meta:
         model = Status
         fields = "__all__"
