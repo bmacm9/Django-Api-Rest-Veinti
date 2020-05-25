@@ -1,7 +1,12 @@
 from rest_framework import viewsets, generics
-from .models import User, CommentPhoto, PersonalSpace, CommentProfile, Friend, Tagged, Photo, Status
-from .serializer import UserSerializer, PersonalSpaceSerializer, CommentPhotoSerializer, CommentProfileSerializer, FriendSerializer, TaggedSerializer, PhotoSerializer, StatusSerializer
+from .models import User, CommentPhoto, PersonalSpace, CommentProfile, Friend, Tagged, Photo, Status, ReplyComment, CommentStatus
+from .serializer import UserSerializer, PersonalSpaceSerializer, CommentPhotoSerializer, CommentProfileSerializer, FriendSerializer, TaggedSerializer, PhotoSerializer, StatusSerializer, ReplyCommentSerializer, CommentStatusSerializer
+from rest_framework.pagination import PageNumberPagination
 
+class StandardResultsSetPagination(PageNumberPagination):
+    page_size = 10
+    page_size_query_param = 'page_size'
+    max_page_size = 10
 
 class UserViewSet(viewsets.ModelViewSet):
     queryset = User.objects.all()
@@ -30,6 +35,7 @@ class CommentPhotoViewSet(viewsets.ModelViewSet):
     serializer_class = CommentPhotoSerializer
 
 class CommentProfileViewSet(viewsets.ModelViewSet):
+    pagination_class = StandardResultsSetPagination
     queryset = CommentProfile.objects.all().order_by('-dateTime')
     serializer_class = CommentProfileSerializer
 
@@ -91,6 +97,7 @@ class PersonalSpaceViewSet(viewsets.ModelViewSet):
         return queryset
 
 class StatusViewSet(viewsets.ModelViewSet):
+    pagination_class = StandardResultsSetPagination
     queryset = Status.objects.all().order_by('-dateTime')
     serializer_class = StatusSerializer
 
@@ -100,5 +107,32 @@ class StatusViewSet(viewsets.ModelViewSet):
         queryset = self.queryset
         if 'user' in query.keys():
             queryset = queryset.filter(user=query.get('user'))
+            return queryset
+        if 'id' in query.keys():
+            queryset = queryset.filter(id=query.get('id'))
+            return queryset
+        return queryset
+
+class CommentStatusViewSet(viewsets.ModelViewSet):
+    queryset = CommentStatus.objects.all().order_by('-dateTime')
+    serializer_class = CommentStatusSerializer
+
+    def get_queryset(self):
+        query = self.request.query_params
+        queryset = self.queryset
+        if 'status' in query.keys():
+            queryset = queryset.filter(status=query.get('status'))
+            return queryset
+        return queryset
+
+class ReplyCommentViewSet(viewsets.ModelViewSet):
+    queryset = ReplyComment.objects.all().order_by('-dateTime')
+    serializer_class = ReplyCommentSerializer
+    
+    def get_queryset(self):
+        query = self.request.query_params
+        queryset = self.queryset
+        if 'commentProfile' in query.keys():
+            queryset = queryset.filter(commentProfile=query.get('commentProfile'))
             return queryset
         return queryset

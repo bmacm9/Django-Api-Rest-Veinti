@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from .models import User, PersonalSpace, Photo, CommentPhoto, CommentProfile, Friend, Tagged, Status
+from .models import User, PersonalSpace, Photo, CommentPhoto, CommentProfile, Friend, Tagged, Status, CommentStatus, ReplyComment
 
 # Classes to move the information over the internet (in XML or JSON...)
 
@@ -19,10 +19,13 @@ class CommentPhotoSerializer(serializers.ModelSerializer):
         fields = "__all__"
 
 class CommentProfileSerializer(serializers.ModelSerializer):
-    user = UserSerializer()
     class Meta:
         model = CommentProfile
         fields = "__all__"
+
+    def to_representation(self, instance):
+        self.fields['user'] =  UserSerializer(read_only=True)
+        return super(CommentProfileSerializer, self).to_representation(instance)
 
 class FriendSerializer(serializers.ModelSerializer):
     class Meta:
@@ -40,7 +43,30 @@ class PersonalSpaceSerializer(serializers.ModelSerializer):
         fields = "__all__"
 
 class StatusSerializer(serializers.ModelSerializer):
-    user = UserSerializer()
     class Meta:
         model = Status
         fields = "__all__"
+
+    def to_representation(self, instance):
+        self.fields['user'] =  UserSerializer(read_only=True)
+        return super(StatusSerializer, self).to_representation(instance)
+
+class CommentStatusSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = CommentStatus
+        fields = "__all__"
+
+    def to_representation(self, instance):
+        self.fields['status'] =  StatusSerializer(read_only=True)
+        self.fields['user'] =  UserSerializer(read_only=True)
+        return super(CommentStatusSerializer, self).to_representation(instance)
+
+class ReplyCommentSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = ReplyComment
+        fields = "__all__"
+
+    def to_representation(self, instance):
+        self.fields['commentProfile'] =  CommentProfileSerializer(read_only=True)
+        self.fields['user'] =  UserSerializer(read_only=True)
+        return super(ReplyCommentSerializer, self).to_representation(instance)

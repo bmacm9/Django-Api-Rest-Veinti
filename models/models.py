@@ -22,6 +22,7 @@ class Status(models.Model):
     status_text = models.CharField(max_length=50)
     dateTime = models.DateTimeField(default=timezone.now)
     user = models.ForeignKey(User, on_delete=models.CASCADE)
+    hasAnswers = models.CharField(max_length=10, default="no")
 
 class PersonalSpace(models.Model):
 
@@ -37,6 +38,7 @@ class CommentProfile(models.Model):
     profile = models.ForeignKey(User, on_delete=models.CASCADE, related_name='%(class)s_requests_created')
     user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='%(class)s_requests_assigned')
     comment = models.TextField()
+    hasAnswers = models.CharField(default="no", max_length=10)
     dateTime = models.DateTimeField(default=timezone.now)
 
 class Friend(models.Model):
@@ -58,7 +60,22 @@ class CommentPhoto(models.Model):
     comment = models.TextField()
     dateTime = models.DateTimeField(default=timezone.now)
 
+class CommentStatus(models.Model):
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    status = models.ForeignKey(Status, on_delete=models.CASCADE)
+    comment = models.TextField()
+    dateTime = models.DateTimeField(default=timezone.now)
+
+
 class Tagged(models.Model):
     ''' The model for the user tagged on a photo '''
     image = models.ForeignKey(Photo, on_delete=models.CASCADE)
     user = models.ForeignKey(User, on_delete=models.CASCADE)
+
+class ReplyComment(models.Model):
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    commentProfile = models.ForeignKey(CommentProfile, on_delete=models.CASCADE, null=True)
+    commentStatus = models.ForeignKey(CommentStatus, on_delete=models.CASCADE, null=True)
+    commentPhoto = models.ForeignKey(CommentPhoto, on_delete=models.CASCADE, null=True)
+    reply = models.TextField()
+    dateTime = models.DateTimeField(default=timezone.now)
