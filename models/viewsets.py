@@ -34,6 +34,15 @@ class CommentPhotoViewSet(viewsets.ModelViewSet):
     queryset = CommentPhoto.objects.all()
     serializer_class = CommentPhotoSerializer
 
+    def get_queryset(self):
+        query = self.request.query_params
+        queryset = self.queryset
+
+        if 'image' in query.keys():
+            queryset = queryset.filter(image=query.get('image'))
+            return queryset
+        return queryset
+
 class CommentProfileViewSet(viewsets.ModelViewSet):
     pagination_class = StandardResultsSetPagination
     queryset = CommentProfile.objects.all().order_by('-dateTime')

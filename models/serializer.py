@@ -18,6 +18,10 @@ class CommentPhotoSerializer(serializers.ModelSerializer):
         model = CommentPhoto
         fields = "__all__"
 
+    def to_representation(self, instance):
+        self.fields['user'] =  UserSerializer(read_only=True)
+        return super(CommentPhotoSerializer, self).to_representation(instance)
+
 class CommentProfileSerializer(serializers.ModelSerializer):
     class Meta:
         model = CommentProfile
