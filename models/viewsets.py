@@ -1,6 +1,6 @@
 from rest_framework import viewsets, generics
-from .models import User, CommentPhoto, PersonalSpace, CommentProfile, Friend, Tagged, Photo, Status, ReplyComment, CommentStatus
-from .serializer import UserSerializer, PersonalSpaceSerializer, CommentPhotoSerializer, CommentProfileSerializer, FriendSerializer, TaggedSerializer, PhotoSerializer, StatusSerializer, ReplyCommentSerializer, CommentStatusSerializer
+from .models import User, CommentPhoto, PersonalSpace, CommentProfile, Friend, Tagged, Photo, Status, ReplyComment, CommentStatus, FriendRequest, PrivateMessage, Invitation
+from .serializer import UserSerializer, PersonalSpaceSerializer, CommentPhotoSerializer, CommentProfileSerializer, FriendSerializer, TaggedSerializer, PhotoSerializer, StatusSerializer, ReplyCommentSerializer, CommentStatusSerializer, FriendRequestSerializer, PrivateMessageSerializer, InvitationSerializer
 from rest_framework.pagination import PageNumberPagination
 
 class StandardResultsSetPagination(PageNumberPagination):
@@ -27,6 +27,18 @@ class UserViewSet(viewsets.ModelViewSet):
 
         if 'id' in query.keys():
             queryset = queryset.filter(id=query.get('id'))
+            return queryset
+
+        if 'name' and 'surname' in query.keys():
+            queryset = queryset.filter(name=query.get('name'), surname=query.get('surname'))
+            return queryset
+
+        if 'name' in query.keys():
+            queryset = queryset.filter(name=query.get('name'))
+            return queryset
+
+        if 'surname' in query.keys():
+            queryset = queryset.filter(surname=query.get('surname'))
             return queryset
         return queryset
 
@@ -63,14 +75,22 @@ class FriendViewSet(viewsets.ModelViewSet):
     def get_queryset(self):
         query = self.request.query_params
         queryset = self.queryset
-        if 'user' in query.keys():
-            queryset = queryset.filter(user=query.get('user'))
-            return queryset
+
 
         if 'is_friend' in query.keys():
             queryset = queryset.filter(is_friend=query.get('is_friend'))
             return queryset
+
+
+        if 'user' in query.keys():
+            queryset = queryset.filter(user=query.get('user'))
+            return queryset
         return queryset
+
+        if 'user' and 'is_friend' in query.keys():
+            queryset = queryset.filter(user=query.get('user'), is_friend=query.get('is_friend'))
+            return queryset
+
 
 class TaggedViewSet(viewsets.ModelViewSet):
     queryset = Tagged.objects.all()
@@ -143,5 +163,49 @@ class ReplyCommentViewSet(viewsets.ModelViewSet):
         queryset = self.queryset
         if 'commentProfile' in query.keys():
             queryset = queryset.filter(commentProfile=query.get('commentProfile'))
+            return queryset
+        return queryset
+
+class FriendRequestViewSets(viewsets.ModelViewSet):
+    queryset = FriendRequest.objects.all()
+    serializer_class = FriendRequestSerializer
+
+    def get_queryset(self):
+        query = self.request.query_params
+        queryset = self.queryset
+        if 'send_to' in query.keys():
+            queryset = queryset.filter(send_to=query.get('send_to'))
+            return queryset
+        return queryset
+
+class PrivateMessageViewSets(viewsets.ModelViewSet):
+    queryset = PrivateMessage.objects.all().order_by('-dateTime')
+    serializer_class = PrivateMessageSerializer
+
+    def get_queryset(self):
+        query = self.request.query_params
+        queryset = self.queryset
+        if 'send_to' in query.keys():
+            queryset = queryset.filter(send_to=query.get('send_to'))
+            return queryset
+
+        if 'user' in query.keys():
+            queryset = queryset.filter(user=query.get('user'))
+            return queryset
+
+        if 'user' and 'send_to' in query.keys():
+            queryset = queryset.filter(user=query.get('user'), send_to=query.get('send_to'))
+            return queryset
+        return queryset
+
+class InvitationViewSets(viewsets.ModelViewSet):
+    queryset = Invitation.objects.all()
+    serializer_class = InvitationSerializer
+
+    def get_queryset(self):
+        query = self.request.query_params
+        queryset = self.queryset
+        if 'code' in query.keys():
+            queryset = queryset.filter(code=query.get('code'))
             return queryset
         return queryset

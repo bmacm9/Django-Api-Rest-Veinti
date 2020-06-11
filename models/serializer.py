@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from .models import User, PersonalSpace, Photo, CommentPhoto, CommentProfile, Friend, Tagged, Status, CommentStatus, ReplyComment
+from .models import User, PersonalSpace, Photo, CommentPhoto, CommentProfile, Friend, Tagged, Status, CommentStatus, ReplyComment, FriendRequest, PrivateMessage, Invitation
 
 # Classes to move the information over the internet (in XML or JSON...)
 
@@ -35,6 +35,11 @@ class FriendSerializer(serializers.ModelSerializer):
     class Meta:
         model = Friend
         fields = "__all__"
+
+    def to_representation(self, instance):
+        self.fields['user'] = UserSerializer(read_only=True)
+        self.fields['is_friend'] = UserSerializer(read_only=True)
+        return super(FriendSerializer, self).to_representation(instance)
 
 class TaggedSerializer(serializers.ModelSerializer):
     class Meta:
@@ -74,3 +79,32 @@ class ReplyCommentSerializer(serializers.ModelSerializer):
         self.fields['commentProfile'] =  CommentProfileSerializer(read_only=True)
         self.fields['user'] =  UserSerializer(read_only=True)
         return super(ReplyCommentSerializer, self).to_representation(instance)
+
+class FriendRequestSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = FriendRequest
+        fields = "__all__"
+
+    def to_representation(self, instance):
+        self.fields['user'] = UserSerializer(read_only=True)
+        self.fields['send_to'] = UserSerializer(read_only=True)
+        return super(FriendRequestSerializer, self).to_representation(instance)
+
+class PrivateMessageSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = PrivateMessage
+        fields = "__all__"
+
+    def to_representation(self, instance):
+        self.fields['user'] = UserSerializer(read_only=True)
+        self.fields['send_to'] = UserSerializer(read_only=True)
+        return super(PrivateMessageSerializer, self).to_representation(instance)
+
+class InvitationSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Invitation
+        fields = "__all__"
+
+    def to_representation(self, instance):
+        self.fields['user'] = UserSerializer(read_only=True)
+        return super(InvitationSerializer, self).to_representation(instance)

@@ -11,7 +11,7 @@ class User(models.Model):
     surname = models.CharField(max_length=50)
     email = models.EmailField()
     password = models.CharField(max_length=200)
-    profile_pic = models.ImageField(null=True, blank=True)
+    profile_pic = models.ImageField()
     invitations = models.IntegerField()
     visits = models.IntegerField(default=0)
     born = models.DateField(blank=True, null=True)
@@ -79,3 +79,17 @@ class ReplyComment(models.Model):
     commentPhoto = models.ForeignKey(CommentPhoto, on_delete=models.CASCADE, null=True)
     reply = models.TextField()
     dateTime = models.DateTimeField(default=timezone.now)
+
+class FriendRequest(models.Model):
+    user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='%(class)s_requests_created')
+    send_to = models.ForeignKey(User, on_delete=models.CASCADE, related_name='%(class)s_requests_assigned')
+
+class PrivateMessage(models.Model):
+    user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='%(class)s_requests_created')
+    send_to = models.ForeignKey(User, on_delete=models.CASCADE, related_name='%(class)s_requests_assigned')
+    dateTime = models.DateTimeField(default=timezone.now)
+    message = models.TextField()
+
+class Invitation(models.Model):
+    code = models.CharField(max_length=10)
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
