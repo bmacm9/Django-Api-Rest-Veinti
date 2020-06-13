@@ -1,6 +1,6 @@
 from rest_framework import routers
 
-from .viewsets import UserViewSet, PersonalSpaceViewSet, PhotoViewSet, CommentPhotoViewSet, CommentProfileViewSet, FriendViewSet, TaggedViewSet, StatusViewSet, ReplyCommentViewSet, CommentStatusViewSet, FriendRequestViewSets, PrivateMessageViewSets, InvitationViewSets
+from .viewsets import UserViewSet, PersonalSpaceViewSet, PhotoViewSet, CommentPhotoViewSet, CommentProfileViewSet, FriendViewSet, TaggedViewSet, StatusViewSet, ReplyCommentViewSet, CommentStatusViewSet, FriendRequestViewSets, PrivateMessageViewSets, InvitationViewSets, NotificationsViewSets
 
 router = routers.SimpleRouter()
 
@@ -17,5 +17,6 @@ router.register('commentstatus', CommentStatusViewSet)
 router.register('friendrequest', FriendRequestViewSets)
 router.register('privatemessage', PrivateMessageViewSets)
 router.register('invitation', InvitationViewSets)
+router.register('notifications', NotificationsViewSets)
 
 urlpatterns = router.urls

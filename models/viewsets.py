@@ -1,6 +1,6 @@
 from rest_framework import viewsets, generics
-from .models import User, CommentPhoto, PersonalSpace, CommentProfile, Friend, Tagged, Photo, Status, ReplyComment, CommentStatus, FriendRequest, PrivateMessage, Invitation
-from .serializer import UserSerializer, PersonalSpaceSerializer, CommentPhotoSerializer, CommentProfileSerializer, FriendSerializer, TaggedSerializer, PhotoSerializer, StatusSerializer, ReplyCommentSerializer, CommentStatusSerializer, FriendRequestSerializer, PrivateMessageSerializer, InvitationSerializer
+from .models import User, CommentPhoto, PersonalSpace, CommentProfile, Friend, Tagged, Photo, Status, ReplyComment, CommentStatus, FriendRequest, PrivateMessage, Invitation, Notifications
+from .serializer import UserSerializer, PersonalSpaceSerializer, CommentPhotoSerializer, CommentProfileSerializer, FriendSerializer, TaggedSerializer, PhotoSerializer, StatusSerializer, ReplyCommentSerializer, CommentStatusSerializer, FriendRequestSerializer, PrivateMessageSerializer, InvitationSerializer, NotificationsSerializer
 from rest_framework.pagination import PageNumberPagination
 
 class StandardResultsSetPagination(PageNumberPagination):
@@ -207,5 +207,17 @@ class InvitationViewSets(viewsets.ModelViewSet):
         queryset = self.queryset
         if 'code' in query.keys():
             queryset = queryset.filter(code=query.get('code'))
+            return queryset
+        return queryset
+
+class NotificationsViewSets(viewsets.ModelViewSet):
+    queryset = Notifications.objects.all()
+    serializer_class = NotificationsSerializer
+
+    def get_queryset(self):
+        query = self.request.query_params
+        queryset = self.queryset
+        if 'user' in query.keys():
+            queryset = queryset.filter(user=query.get('user'))
             return queryset
         return queryset

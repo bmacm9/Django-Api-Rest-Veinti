@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from .models import User, PersonalSpace, Photo, CommentPhoto, CommentProfile, Friend, Tagged, Status, CommentStatus, ReplyComment, FriendRequest, PrivateMessage, Invitation
+from .models import User, PersonalSpace, Photo, CommentPhoto, CommentProfile, Friend, Tagged, Status, CommentStatus, ReplyComment, FriendRequest, PrivateMessage, Invitation, Notifications
 
 # Classes to move the information over the internet (in XML or JSON...)
 
@@ -108,3 +108,12 @@ class InvitationSerializer(serializers.ModelSerializer):
     def to_representation(self, instance):
         self.fields['user'] = UserSerializer(read_only=True)
         return super(InvitationSerializer, self).to_representation(instance)
+
+class NotificationsSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Notifications
+        fields = "__all__"
+
+    def to_representation(self, instance):
+        self.fields['user'] = UserSerializer(read_only=True)
+        return super(NotificationsSerializer, self).to_representation(instance)
